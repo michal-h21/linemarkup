@@ -27,6 +27,7 @@ end
 
 function Parser.parse_line(self, line)
   local sigil, rest =  line:match("^%s*(.)(.+)")
+  if not sigil then return line end
   -- remove unnecessary whitespace
   rest = self:trim(rest)
   local rules = self.rules[sigil]
@@ -51,9 +52,7 @@ function linemarkup.new_parser()
 end
 
 
-local parse = linemarkup.new_parser()
-parse:add_rule("#", "", "Section: %1")
-print(parse:parse_line("# ahoj světe"))
+-- print(parse:parse_line("# ahoj světe"))
 
 return linemarkup
 
