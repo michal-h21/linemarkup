@@ -4,19 +4,19 @@
 linemarkup = linemarkup or require "linemarkup-lib"
 linemarkup_parsers = {}
 
+local parse = linemarkup.new_parser()
+parse:add_rule("#", "", "\\section{%1}")
+parse:add_rule("-", "",  "\\linemarkupitemize{%1}")
 
 local function process(line)
-  local sigil =  line:match("^%s*(.)")
-  if sigil == "#" then
-    return line:gsub("#%s*(.+)", '\\section{%1}')
-  else
-    return line
-  end
-
+return parse:parse_line(line)
 end
 luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 
 
 \end{luacode*}
+
+
+\newcommand\linemarkupitemize[1]{\begingroup\noindent\llap{$\bullet$\enspace}\ignorespaces\leftskip=\parindent #1\par\endgroup}
 
 \endinput
