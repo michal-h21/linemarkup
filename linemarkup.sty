@@ -2,6 +2,8 @@
 \RequirePackage{luacode}
 \begin{luacode*}
 linemarkup = linemarkup or require "linemarkup-lib"
+linemarkup_parsers = {}
+
 
 local function process(line)
   local sigil =  line:match("^%s*(.)")
