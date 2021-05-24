@@ -1,0 +1,20 @@
+\ProvidesPackage{linemarkup}
+\RequirePackage{luacode}
+\begin{luacode*}
+linemarkup = linemarkup or require "linemarkup-lib"
+
+local function process(line)
+  local sigil =  line:match("^%s*(.)")
+  if sigil == "#" then
+    return line:gsub("#%s*(.+)", '\\section{%1}')
+  else
+    return line
+  end
+
+end
+luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
+
+
+\end{luacode*}
+
+\endinput
