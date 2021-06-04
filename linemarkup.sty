@@ -20,7 +20,7 @@ local parsers = {}
 
 
 
-local parse = linemarkup.new_parser()
+local parse = linemarkup.declare_parser("default")
 parse:add_rule("#", "\\section{%1}","section")
 parse:add_rule("-",  "item: {%1}\\\\", "itemize")
 -- the code block started by ``` 
@@ -29,19 +29,21 @@ parse:add_rule("```", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim
 
 parsers.default = parse
 
-local verb = linemarkup.new_parser()
+local verb = linemarkup.declare_parser("verbatim")
 verb:add_rule("```", "\\end{verbatim}\\linemarkupselect{default}","verbatim_end")
 
 parsers.verbatim = verb
 
 local function process(line)
-  local parse = parsers[tex.toks["linemarkup@currentmarkup"]]
-  local result = parse:parse_line(line)
-  if result.line then
-    print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
-  end
-  -- return value parser by lineparser, or the original line
-  return result.value or line
+  local parser_name = tex.toks["linemarkup@currentmarkup"]
+  return linemarkup.process_line(line, parser_name) 
+  -- local parse = parsers[tex.toks["linemarkup@currentmarkup"]]
+  -- local result = parse:parse_line(line)
+  -- if result.line then
+  --   print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
+  -- end
+  -- -- return value parser by lineparser, or the original line
+  -- return result.value or line
 end
 luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 

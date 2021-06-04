@@ -1,4 +1,3 @@
-
 local linemarkup = {}
 linemarkup.active = true
 linemarkup.parsers = {}
@@ -83,7 +82,7 @@ function Parser.parse_line(self, line)
 end
 
 
-function linemarkup.new_parser()
+function linemarkup.new_parser(name)
   local self = setmetatable({}, Parser)
   self.rules = {}
   self.types = {}
@@ -99,6 +98,20 @@ function linemarkup.declare_parser(name)
     linemarkup.parsers[name] = linemarkup.new_parser()
   end
   return linemarkup.parsers[name] 
+end
+
+
+--- select correct parser for the current line, process it, and return transformed text
+function linemarkup.process_line(line, parser_name)
+  local parse = linemarkup.parsers[parser_name]
+  -- just return the original text if parsing is not active or if we cannot find the parser by name
+  if not parse or linemarkup.active == false then return line end
+  local result = parse:parse_line(line)
+  -- if result.line then
+    -- print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
+  -- end
+  -- return value parser by lineparser, or the original line
+  return result.value or line
 end
 
 
