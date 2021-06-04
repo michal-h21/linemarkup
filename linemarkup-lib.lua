@@ -13,13 +13,13 @@ end
 --- Add rules for parsing. Patterns should match text that follows sigil
 -- Multiple patterns can be used for one sigil, add them from the most specific to 
 -- the least specific. To match the whole rest of line, leave pattern empty.
--- @param sigil first character of the rule
--- @param pattern Lua pattern that can match additional markup from the line after sigil. 
+-- @param pattern Lua pattern that can match additional markup from the line after sigil. It must contain at least sigil.
 -- Use empty string to match the whole text
 -- @param replace string that will be filled with matched text from pattern. The %1 string will contain 
 -- line value if no pattern argument is provided
 -- @param block_type unique name of the block
-function Parser.add_rule(self, sigil, pattern, replace, block_type)
+function Parser.add_rule(self, pattern, replace, block_type)
+  local sigil, pattern = pattern:match("^(.)(.*)")
   local rules = self.rules
   local sigil_patterns = rules[sigil] or {}
   -- replace empty pattern with pattern that matches everything

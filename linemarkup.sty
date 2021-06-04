@@ -21,16 +21,16 @@ local parsers = {}
 
 
 local parse = linemarkup.new_parser()
-parse:add_rule("#", "", "\\section{%1}","section")
-parse:add_rule("-", "",  "item: {%1}\\\\", "itemize")
+parse:add_rule("#", "\\section{%1}","section")
+parse:add_rule("-",  "item: {%1}\\\\", "itemize")
 -- the code block started by ``` 
-parse:add_rule("`", "``", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim_start")
+parse:add_rule("```", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim_start")
 
 
 parsers.default = parse
 
 local verb = linemarkup.new_parser()
-verb:add_rule("`", "``", "\\end{verbatim}\\linemarkupselect{default}","verbatim_end")
+verb:add_rule("```", "\\end{verbatim}\\linemarkupselect{default}","verbatim_end")
 
 parsers.verbatim = verb
 
