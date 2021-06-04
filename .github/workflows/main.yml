@@ -13,8 +13,7 @@ jobs:
       env:
         command: "make4ht -ulm final -a debug -d docs linemarkup-doc.tex; cp docs/linemarkup-doc.html docs/index.html"
     - name: Publish the web pages
-      uses: peaceiris/actions-gh-pages@v2.5.0
+      uses: peaceiris/actions-gh-pages@v3
       env:
-        ACTIONS_DEPLOY_KEY: ${{ secrets.GITHUB_TOKEN }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./out
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
