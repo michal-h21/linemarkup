@@ -1,22 +1,63 @@
 \ProvidesPackage{linemarkup}
 \RequirePackage{luacode}
+
+% we want to support multiple concurrent line markups in a document.
+% the currently selected markup will be stored in this token list, so it
+% can be accessed from Lua
+\newtoks\linemarkup@currentmarkup
+
+\newcommand\linemarkupselect[1]{%
+\linemarkup@currentmarkup={#1}
+}
+\linemarkupselect{default}
+
+
 \begin{luacode*}
 linemarkup = linemarkup or require "linemarkup-lib"
 linemarkup_parsers = {}
+linemarkup.active = false
+local parsers = {}
+
+
 
 local parse = linemarkup.new_parser()
-parse:add_rule("#", "", "\\section{%1}")
-parse:add_rule("-", "",  "\\linemarkupitemize{%1}")
+parse:add_rule("#", "", "\\section{%1}","section")
+parse:add_rule("-", "",  "item: {%1}\\\\", "itemize")
+-- the code block started by ``` 
+parse:add_rule("`", "``", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim_start")
+
+
+parsers.default = parse
+
+local verb = linemarkup.new_parser()
+verb:add_rule("`", "``", "\\end{verbatim}\\linemarkupselect{default}","verbatim_end")
+
+parsers.verbatim = verb
 
 local function process(line)
-return parse:parse_line(line)
+  local parse = parsers[tex.toks["linemarkup@currentmarkup"]]
+  local result = parse:parse_line(line)
+  if result.line then
+    print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
+  end
+  -- return value parser by lineparser, or the original line
+  return result.value or line
 end
 luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 
 
 \end{luacode*}
 
+% activate linemarkup processing only at beginning of document. it is not
+% useful in preamble
+\AtBeginDocument{%
+  \directlua{linemarkup.active=true}%
+}
 
-\newcommand\linemarkupitemize[1]{\begingroup\noindent\llap{$\bullet$\enspace}\ignorespaces\leftskip=\parindent #1\par\endgroup}
+\NewDocumentCommand{\AddLineRule}{v}{
+  \directlua{print("*********** ahoj: \luatexluaescapestring{\unexpanded{#1}}")}
+}
+
+% \ahoj{wtf % nazdar}
 
 \endinput
