@@ -1,6 +1,11 @@
 local linemarkup = {}
+-- set to false to stop line processing
 linemarkup.active = true
+-- all parsers are saved in this table
 linemarkup.parsers = {}
+-- current block_type
+linemarkup.current_block = ""
+
 
 local Parser = {}
 Parser.__index = Parser
@@ -101,21 +106,44 @@ function linemarkup.declare_parser(name)
 end
 
 
+
+function linemarkup.handle_blocks(line, block_type)
+  if linemarkup.current_block ~= block_type then
+    print("change block from " .. linemarkup.current_block .. " to " .. block_type)
+  end
+  linemarkup.current_block = block_type
+  return line
+end
+
+-- keep track of missing parsers that user tried to load
+local missing_parsers = {}
+
 --- select correct parser for the current line, process it, and return transformed text
 function linemarkup.process_line(line, parser_name)
   local parse = linemarkup.parsers[parser_name]
   -- just return the original text if parsing is not active or if we cannot find the parser by name
-  if not parse or linemarkup.active == false then return line end
+  if linemarkup.active == true then
+    print("active" , line)
+    -- return line
+  end
+  if not parse then 
+    if not missing_parsers[parser_name] then
+      warning("Unknown parser name: " .. name)
+    end
+    missing_parsers[parser_name] = true
+    return linemarkup.handle_blocks(line, "")
+  elseif linemarkup.active == false 
+    then return linemarkup.handle_blocks(nil, "")
+  end
   local result = parse:parse_line(line)
-  -- if result.line then
-    -- print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
-  -- end
+  if result.line then
+    print(result.line, result.value, result.block_type)
+  end
   -- return value parser by lineparser, or the original line
-  return result.value or line
+  return linemarkup.handle_blocks(result.value, result.block_type) or linemarkup.handle_blocks(line, "")
 end
 
 
--- print(parse:parse_line("# ahoj světe"))
 
 return linemarkup
 
