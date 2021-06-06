@@ -1,8 +1,17 @@
 \documentclass{article}
 \usepackage{linemarkup}
+\usepackage{showexpl}
+\usepackage{url}
 \begin{document}
 
-\title{The \textit{Linemarkup} Package}
+\title{The \textit{Linemarkup} Package\\Line oriented markup for LuaLaTeX}
+\author{Michal Hoftich}
+
+\maketitle
+
+
+
+
 
 # sample section
 
@@ -22,6 +31,45 @@ ble
 ```
 
 - a zase item
+
+\LinemarkupDisable
+
+% \NewDocumentCommand{\showexample}{+v}{%
+\begin{luacode*}
+  -- I want to print verbatim code and the parset result
+local test = [[
+- hello
+- world
+]]
+local lines = linemarkup.lines(test)
+
+tex.print('\\begin{verbatim}')
+for _, line in pairs(lines) do
+  tex.print(line)
+end
+tex.print('\\end{verbatim}')
+linemarkup.active = true
+linemarkup.process_lines(test, "default")
+\end{luacode*}
+\LinemarkupEnable
+% \LinemarkupPrint{#1}
+% }
+
+
+
+% \def\hello{\detokenize{%
+% - nazdarek
+% - ty jo
+%  }
+% }
+
+% \directlua{%
+% tex.sprint('\\begin{verbatim}')
+% tex.sprint([[\hello]])
+% tex.sprint('\\end{verbatim}')
+% }
+% \expandafter\LinemarkupPrint{\hello}
+
 
 \end{document}
 

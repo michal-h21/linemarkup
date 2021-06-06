@@ -37,29 +37,50 @@ parsers.verbatim = verb
 local function process(line)
   local parser_name = tex.toks["linemarkup@currentmarkup"]
   return linemarkup.process_line(line, parser_name) 
-  -- local parse = parsers[tex.toks["linemarkup@currentmarkup"]]
-  -- local result = parse:parse_line(line)
-  -- if result.line then
-  --   print(result.line, result.value, result.block_type,tex.toks["linemarkup@currentmarkup"])
-  -- end
-  -- -- return value parser by lineparser, or the original line
-  -- return result.value or line
 end
 luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 
+function linemarkup.lines(text)
+  local lines = {}
+  for line in text:gmatch("([^\n]+)") do
+    lines[#lines+1] = line
+  end
+  return lines
+end
+
+function linemarkup.process_lines(text, markup)
+  local lines = linemarkup.lines(text)
+  for _, line in ipairs(lines) do
+    tex.sprint(linemarkup.process_line(line, markup))
+  end
+end
 
 \end{luacode*}
 
+% commands for enabling and disabling of the line processing
+\NewDocumentCommand{\LinemarkupEnable}{}{\directlua{linemarkup.active=true}}
+\NewDocumentCommand{\LinemarkupDisable}{}{\directlua{linemarkup.active=false}}
+
 % activate linemarkup processing only at beginning of document. it is not
-% useful in preamble
-\AtBeginDocument{%
-  \directlua{linemarkup.active=true}%
+% useful in the preamble, it may slow package loading and cause compilation errors
+\LinemarkupDisable
+\AddToHook{begindocument/end}{\LinemarkupEnable}
+
+% command that accepts line markup and prints the processed TeX markup to the document 
+% optional argument is syntax that should be used
+\NewDocumentCommand{\LinemarkupPrint}{O{\the\linemarkup@currentmarkup} m}{%
+  \directlua{%
+    local text = [[\luatexluaescapestring{#2}]]
+    % linemarkup.process_lines("hello","#1" )
+    linemarkup.process_lines(text, "\luatexluaescapestring{#1}")
+  }
+  % \end{luacode*}
 }
 
-\NewDocumentCommand{\AddLineRule}{v}{
-  \directlua{print("*********** ahoj: \luatexluaescapestring{\unexpanded{#1}}")}
+% define new line markup block
+\NewDocumentCommand{\LinemarkupAddBlock}{v}{
+  \directlua{print("*********** ahoj: {\unexpanded{#1}}")}
 }
 
-% \ahoj{wtf % nazdar}
 
 \endinput
