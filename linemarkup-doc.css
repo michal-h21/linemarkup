@@ -1,5 +1,8 @@
  
 /* start css.sty */
+.rm-lmr-17{font-size:170%;}
+.rm-lmri-12x-x-144{font-size:172%; font-style:italic;}
+.rm-lmr-12{font-size:120%;}
 .rm-lmtt-10{ font-family: monospace,monospace;}
 p{margin-top:0;margin-bottom:0}
 p.indent{text-indent:0;}
@@ -115,5 +118,10 @@ figure.figure > p {text-align:center;}
 figcaption.caption {text-indent:-2em; margin-left:3em; margin-right:1em; text-align:center;}
 figcaption.caption span.id{font-weight: bold; white-space: nowrap; }
 .abstract{margin:1em;}
+.lstlisting .label{margin-right:0.5em; }
+div.lstlisting{font-family: monospace,monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; }
+div.lstinputlisting{ font-family: monospace,monospace; white-space: nowrap; }
+.lstinputlisting .label{margin-right:0.5em;}
+.rotatebox{display: inline-block;}
 /* end css.sty */
 
