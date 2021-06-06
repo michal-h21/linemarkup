@@ -34,7 +34,27 @@ ble
 
 \LinemarkupDisable
 
-% \NewDocumentCommand{\showexample}{+v}{%
+\NewDocumentCommand{\showexample}{+v}{%
+\directlua{
+local test = [[#1]]
+local lines = linemarkup.lines(test)
+tex.print('\\begin{verbatim}')
+for _, line in pairs(lines) do
+  tex.print(line)
+end
+tex.print('\\end{verbatim}')
+linemarkup.active = true
+linemarkup.process_lines(test, "default")
+}
+}
+
+\showexample{
+# will this work?
+
+- lets see
+}
+
+\LinemarkupDisable
 \begin{luacode*}
   -- I want to print verbatim code and the parset result
 local test = [[
