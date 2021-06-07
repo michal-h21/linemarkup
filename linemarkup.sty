@@ -40,21 +40,6 @@ local function process(line)
 end
 luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 
-function linemarkup.lines(text)
-  local lines = {}
-  for line in text:gmatch("([^\n]+)") do
-    lines[#lines+1] = line
-  end
-  return lines
-end
-
-function linemarkup.process_lines(text, markup)
-  local lines = linemarkup.lines(text)
-  for _, line in ipairs(lines) do
-    tex.sprint(linemarkup.process_line(line, markup))
-  end
-end
-
 \end{luacode*}
 
 % commands for enabling and disabling of the line processing

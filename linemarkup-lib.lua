@@ -143,6 +143,23 @@ function linemarkup.process_line(line, parser_name)
   return linemarkup.handle_blocks(result.value, result.block_type) or linemarkup.handle_blocks(line, "")
 end
 
+-- extract lines from string to table
+function linemarkup.lines(text)
+  local lines = {}
+  for line in text:gmatch("([^\n]+)") do
+    lines[#lines+1] = line
+  end
+  return lines
+end
+
+-- 
+function linemarkup.process_lines(text, parser_name)
+  local lines = linemarkup.lines(text)
+  for _, line in ipairs(lines) do
+    tex.sprint(linemarkup.process_line(line, parser_name))
+  end
+end
+
 
 
 return linemarkup
