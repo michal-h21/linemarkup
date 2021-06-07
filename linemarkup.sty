@@ -30,7 +30,7 @@ parse:add_rule("```", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim
 parsers.default = parse
 
 local verb = linemarkup.declare_parser("verbatim")
-verb:add_rule("```", "\\end{verbatim}\\linemarkupselect{default}","verbatim_end")
+verb:add_rule('```', "\\end{verbatim}\n\n www\\linemarkupselect{default}",'verbatim_end')
 
 parsers.verbatim = verb
 

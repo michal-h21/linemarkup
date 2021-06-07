@@ -1,7 +1,31 @@
 \documentclass{article}
 \usepackage{linemarkup}
 \usepackage{showexpl}
+\usepackage{tcolorbox}
 \usepackage{url}
+
+\makeatletter
+\NewDocumentCommand{\showexample}{O{\the\linemarkup@currentmarkup} +v}{%
+  \typeout{**************** wtf #1}
+\directlua{
+local test = [[#2]]
+local lines = linemarkup.lines(test)
+tex.print('\\begin{verbatim}')
+for _, line in pairs(lines) do
+  tex.print(line)
+end
+tex.print('\\end{verbatim}')
+linemarkup.active = true
+local processed = linemarkup.process_lines(lines, 'default')
+tex.print('\\begin{tcolorbox}')
+for _, line in ipairs(processed) do
+  tex.sprint(line)
+end
+tex.print('\\end{tcolorbox}')
+}
+}
+\makeatother
+
 \begin{document}
 
 \title{The \textit{Linemarkup} Package\\Line oriented markup for LuaLaTeX}
@@ -18,10 +42,10 @@
 - items 
 - more items
 
-\bgroup
+% \bgroup
 % \linemarkupselect{something}
-\noindent normální text
-\egroup
+% \noindent normální text
+% \egroup
 
 Cože
 
@@ -34,19 +58,6 @@ ble
 
 \LinemarkupDisable
 
-\NewDocumentCommand{\showexample}{+v}{%
-\directlua{
-local test = [[#1]]
-local lines = linemarkup.lines(test)
-tex.print('\\begin{verbatim}')
-for _, line in pairs(lines) do
-  tex.print(line)
-end
-tex.print('\\end{verbatim}')
-linemarkup.active = true
-linemarkup.process_lines(test, "default")
-}
-}
 
 \showexample{
 # will this work?
@@ -55,23 +66,24 @@ linemarkup.process_lines(test, "default")
 }
 
 \LinemarkupDisable
-\begin{luacode*}
-  -- I want to print verbatim code and the parset result
-local test = [[
-- hello
-- world
-]]
-local lines = linemarkup.lines(test)
 
-tex.print('\\begin{verbatim}')
-for _, line in pairs(lines) do
-  tex.print(line)
-end
-tex.print('\\end{verbatim}')
-linemarkup.active = true
-linemarkup.process_lines(test, "default")
-\end{luacode*}
-\LinemarkupEnable
+% \begin{luacode*}
+%   -- I want to print verbatim code and the parset result
+% local test = [[
+% - hello
+% - world
+% ]]
+% local lines = linemarkup.lines(test)
+% 
+% tex.print('\\begin{verbatim}')
+% for _, line in pairs(lines) do
+%   tex.print(line)
+% end
+% tex.print('\\end{verbatim}')
+% linemarkup.active = true
+% linemarkup.process_lines(test, "default")
+% \end{luacode*}
+% \LinemarkupEnable
 % \LinemarkupPrint{#1}
 % }
 

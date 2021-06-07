@@ -63,6 +63,11 @@ function Parser.get_rules(self, line)
   return rest, self.rules[sigil]
 end
 
+-- check if current block type needs to close
+function Parser.update_current_type(result)
+
+end
+
 -- initialize table that will be returned
 function Parser.new_line(self, line)
   return {block_type = "text", line = line, value = line}
@@ -80,6 +85,7 @@ function Parser.parse_line(self, line)
     if self:match_block_type(rule, rest) then
       result.value = self:replace(rule, rest)
       result.block_type = rule
+      self:update_current_type(result)
       return result
     end
   end
@@ -91,6 +97,7 @@ function linemarkup.new_parser(name)
   local self = setmetatable({}, Parser)
   self.rules = {}
   self.types = {}
+  self.current = ""
   return self
 end
 
@@ -112,7 +119,7 @@ function linemarkup.handle_blocks(line, block_type)
     print("change block from " .. linemarkup.current_block .. " to " .. block_type)
   end
   linemarkup.current_block = block_type
-  return line
+  return line 
 end
 
 -- keep track of missing parsers that user tried to load
@@ -122,10 +129,6 @@ local missing_parsers = {}
 function linemarkup.process_line(line, parser_name)
   local parse = linemarkup.parsers[parser_name]
   -- just return the original text if parsing is not active or if we cannot find the parser by name
-  if linemarkup.active == true then
-    print("active" , line)
-    -- return line
-  end
   if not parse then 
     if not missing_parsers[parser_name] then
       warning("Unknown parser name: " .. name)
@@ -136,9 +139,6 @@ function linemarkup.process_line(line, parser_name)
     then return linemarkup.handle_blocks(nil, "")
   end
   local result = parse:parse_line(line)
-  if result.line then
-    print(result.line, result.value, result.block_type)
-  end
   -- return value parser by lineparser, or the original line
   return linemarkup.handle_blocks(result.value, result.block_type) or linemarkup.handle_blocks(line, "")
 end
@@ -153,11 +153,12 @@ function linemarkup.lines(text)
 end
 
 -- 
-function linemarkup.process_lines(text, parser_name)
-  local lines = linemarkup.lines(text)
+function linemarkup.process_lines(lines, parser_name)
+  local processed = {}
   for _, line in ipairs(lines) do
-    tex.sprint(linemarkup.process_line(line, parser_name))
+    processed[#processed + 1] =linemarkup.process_line(line, parser_name)
   end
+  return processed
 end
 
 
