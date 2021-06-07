@@ -123,5 +123,10 @@ div.lstlisting{font-family: monospace,monospace; white-space: nowrap; margin-top
 div.lstinputlisting{ font-family: monospace,monospace; white-space: nowrap; }
 .lstinputlisting .label{margin-right:0.5em;}
 .rotatebox{display: inline-block;}
+.tcolorbox{margin-top:0.5em;margin-bottom: 0.5em;}
+.tcolorbox .lowerbox{margin-top:0pt;}
+div.verbatiminput {font-family: monospace,monospace; white-space: nowrap; }
+#tcolobox-1 .tcolorbox-title{color: #FFFFFF; background-color: #404040;}
+#tcolobox-1 .tcolorbox-content{color: #000000; background-color: #F2F2F2; border: 1px solid #404040;}
 /* end css.sty */
 
