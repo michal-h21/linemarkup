@@ -8,7 +8,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run make4ht
-      uses: michal-h21/make4ht-action@master
+      # uses: michal-h21/make4ht-action@master
+      uses: ghcr.io/michal-h21/make4ht-action:latest
       # uses: docker://michalh21/make4ht-docker:latest
       env:
         command: "make4ht -ulm final -a debug -d docs linemarkup-doc.tex; cp docs/linemarkup-doc.html docs/index.html"
