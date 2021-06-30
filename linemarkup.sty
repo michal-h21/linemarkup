@@ -34,11 +34,21 @@ verb:add_rule('```', "\\end{verbatim}\n\n www\\linemarkupselect{default}",'verba
 
 parsers.verbatim = verb
 
+-- pattern that is checked in the process_input_buffer to stop the processing
+linemarkup.end_pattern 
+linemarkup.current_lines = {}
+
 local function process(line)
-  local parser_name = tex.toks["linemarkup@currentmarkup"]
-  return linemarkup.process_line(line, parser_name) 
+  -- local parser_name = tex.toks["linemarkup@currentmarkup"]
+  -- return linemarkup.process_line(line, parser_name) 
+  if linemarkup.active then
+    if not line:match(linemarkup.end_pattern) then
+      -- discard this line from the output, but save it in the current linemarkup buffer
+      table.insert(linemarkup.current_lines, line)
+      return ""
+  end
 end
-luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
+-- luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
 
 \end{luacode*}
 

@@ -24,6 +24,11 @@ end
 tex.print('\\end{tcolorbox}')
 }
 }
+
+\NewDocumentEnvironment{exampleenv}{ +b }{%
+  % \showexample{#1}
+}{}{}
+
 \makeatother
 
 \begin{document}
@@ -37,6 +42,7 @@ tex.print('\\end{tcolorbox}')
 
 
 
+\begin{exampleenv}
 # sample section
 
 - items 
@@ -47,6 +53,7 @@ tex.print('\\end{tcolorbox}')
 % \noindent normální text
 % \egroup
 
+
 Cože
 
 ```
@@ -54,18 +61,20 @@ ble
 - ahoj
 ```
 
+
 - a zase item
+\end{exampleenv}
 
-\LinemarkupDisable
+% \LinemarkupDisable
 
 
-\showexample{
-# will this work?
+% \showexample{
+% # will this work?
 
-- lets see
-}
+% - lets see
+% }
 
-\LinemarkupDisable
+% \LinemarkupDisable
 
 % \begin{luacode*}
 %   -- I want to print verbatim code and the parset result
