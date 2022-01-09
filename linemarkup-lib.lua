@@ -161,6 +161,24 @@ function linemarkup.process_lines(lines, parser_name)
   return processed
 end
 
+function linemarkup.process_text(text, parser_name)
+  local lines = {}
+  for line in text:gmatch("([^\n]*)") do 
+    print("reading line", line)
+    lines[#lines+1] = line
+  end
+  return linemarkup.process_lines(lines, parser_name)
+end
+
+function linemarkup.print_tex(lines)
+  for _, line in ipairs(lines) do
+    print(line)
+    tex.sprint(line)
+  end
+end
+
+
+
 
 
 return linemarkup
