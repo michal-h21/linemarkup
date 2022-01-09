@@ -97,18 +97,38 @@ ble
 
 
 
-% \def\hello{\detokenize{%
-% - nazdarek
-% - ty jo
-%  }
-% }
 
 % \directlua{%
-% tex.sprint('\\begin{verbatim}')
-% tex.sprint([[\hello]])
-% tex.sprint('\\end{verbatim}')
+% tex.sprint([[
+% \\begin{verbatim}
+% \hello
+% \\end{verbatim}
+% ]])
 % }
-% \expandafter\LinemarkupPrint{\hello}
+
+
+\LinemarkupPrint{
+- so 
+- here
+- we are
+```a
+}
+Here is the end
+
+\LinemarkupAddBlock|%|
+
+\pokus|
+- hello markup
+
+- item again
+- another item
+
+```
+verbatim text
+  another line
+```
+- item again
+|
 
 
 \end{document}
