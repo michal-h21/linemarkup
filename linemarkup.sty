@@ -24,7 +24,7 @@ local parse = linemarkup.declare_parser("default")
 parse:add_rule("#", "\\section{%1}","section")
 parse:add_rule("-",  "item: {%1}\\\\", "itemize")
 -- the code block started by ``` 
-parse:add_rule("```", "\\linemarkupselect{verbatim}\\begin{verbatim}", "verbatim_start")
+parse:add_rule("```", "\\linemarkupselect{verbatim}", "verbatim_start")
 
 
 parsers.default = parse
@@ -35,7 +35,7 @@ verb:add_rule('```', "\\end{verbatim}\n\n www\\linemarkupselect{default}",'verba
 parsers.verbatim = verb
 
 -- pattern that is checked in the process_input_buffer to stop the processing
-linemarkup.end_pattern 
+linemarkup.end_pattern = ""
 linemarkup.current_lines = {}
 
 local function process(line)
@@ -46,6 +46,7 @@ local function process(line)
       -- discard this line from the output, but save it in the current linemarkup buffer
       table.insert(linemarkup.current_lines, line)
       return ""
+    end
   end
 end
 -- luatexbase.add_to_callback("process_input_buffer", process, "linemarkup")
@@ -63,11 +64,14 @@ end
 
 % command that accepts line markup and prints the processed TeX markup to the document 
 % optional argument is syntax that should be used
-\NewDocumentCommand{\LinemarkupPrint}{O{\the\linemarkup@currentmarkup} m}{%
+\NewDocumentCommand{\LinemarkupPrint}{O{\the\linemarkup@currentmarkup} +v}{%
   \directlua{%
-    local text = [[\luatexluaescapestring{#2}]]
+    local text = [[#2]]
     % linemarkup.process_lines("hello","#1" )
-    linemarkup.process_lines(text, "\luatexluaescapestring{#1}")
+    local result = linemarkup.process_text(text, "\luatexluaescapestring{#1}")
+    for _, newline in ipairs(result) do 
+      tex.sprint(newline)
+    end
   }
   % \end{luacode*}
 }
@@ -76,6 +80,14 @@ end
 \NewDocumentCommand{\LinemarkupAddBlock}{v}{
   \directlua{print("*********** ahoj: {\unexpanded{#1}}")}
 }
+
+\NewDocumentCommand\pokus{+v}{%
+  \luaexec{
+    local result = linemarkup.process_text([[
+#1
+]], "default")
+  linemarkup.print_tex(result)
+}}
 
 
 \endinput
